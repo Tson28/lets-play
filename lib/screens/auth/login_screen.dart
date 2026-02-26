@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'widgets/auth_textfield.dart';
+import 'widgets/auth_button.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -35,7 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.lock_outline, size: 80, color: Colors.white),
+                  const Icon(
+                    Icons.lock_outline,
+                    size: 80,
+                    color: Colors.white,
+                  ),
                   const SizedBox(height: 20),
                   const Text(
                     "Welcome Back",
@@ -47,8 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Email
-                  _buildTextField(
+                  /// Email
+                  AuthTextField(
                     controller: _emailController,
                     hint: "Email",
                     icon: Icons.email_outlined,
@@ -62,8 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 20),
 
-                  // Password
-                  _buildTextField(
+                  /// Password
+                  AuthTextField(
                     controller: _passwordController,
                     hint: "Password",
                     icon: Icons.lock_outline,
@@ -91,36 +97,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 30),
 
-                  // Login Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 55,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // TODO: handle login
-                        }
-                      },
-                      child: const Text(
-                        "LOGIN",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF6A11CB),
-                        ),
-                      ),
-                    ),
+                  /// Login Button
+                  AuthButton(
+                    text: "LOGIN",
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        // TODO: Handle login logic
+                      }
+                    },
                   ),
 
                   const SizedBox(height: 20),
 
-                  // Navigate to Register
+                  /// Navigate to Register
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -151,33 +140,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hint,
-    required IconData icon,
-    String? Function(String?)? validator,
-    bool obscureText = false,
-    Widget? suffixIcon,
-  }) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      validator: validator,
-      style: const TextStyle(color: Colors.black),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white,
-        prefixIcon: Icon(icon),
-        suffixIcon: suffixIcon,
-        hintText: hint,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
         ),
       ),
     );
