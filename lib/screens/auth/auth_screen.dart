@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lets_play/screens/auth/home_screen.dart';
+import 'package:lets_play/screens/home/home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -360,4 +360,5 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 }
+
 
