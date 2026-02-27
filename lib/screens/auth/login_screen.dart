@@ -37,11 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.lock_outline,
-                    size: 80,
-                    color: Colors.white,
-                  ),
+                  const Icon(Icons.lock_outline, size: 80, color: Colors.white),
                   const SizedBox(height: 20),
                   const Text(
                     "Welcome Back",
@@ -103,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         // TODO: Handle login logic
+                        Navigator.pushReplacementNamed(context, '/home');
                       }
                     },
                   ),
@@ -133,9 +130,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
