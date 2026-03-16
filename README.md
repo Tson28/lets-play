@@ -12,6 +12,7 @@ Người dùng có thể đăng nhập, chơi minigame casual, chat, tặng quà
 **Quan trọng**: Dự án **chỉ làm UI + mock logic** (dùng Provider/Riverpod + SharedPreferences để lưu điểm, user mock, ngôn ngữ). Không kết nối API thật, không voice thật, không multiplayer thật.
 
 ### Màu sắc chủ đạo (Color Palette)
+- Primary gradient: Tím → Hồng → Vàng (#6B48FF → #FF5E7C → #FFD166)
 - Accent: Xanh ngọc (#06D6A0), Xanh dương (#118AB2)
 - Tết: Đỏ (#FF2E63), Vàng gold (#FFC107), Bao lì xì đỏ
 - Nền: Dark mode nhẹ hoặc gradient sáng/tối tùy tab

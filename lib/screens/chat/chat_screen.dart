@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lets_play/screens/chat/chat_list_screen.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("Tin nhắn", style: TextStyle(fontSize: 24)),
-    );
+    return const ChatListScreen();
   }
 }
