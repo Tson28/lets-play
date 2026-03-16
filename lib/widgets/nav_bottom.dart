@@ -27,10 +27,10 @@ class _NavBottomState extends State<NavBottom> {
   Widget build(BuildContext context) {
     // Map of labels to handle indexing around the FAB
     final List<Map<String, dynamic>> items = [
-      {'icon': Icons.home_outlined, 'active': Icons.home, 'label': 'Home'},
+      {'icon': Icons.home_outlined, 'active': Icons.home, 'label': 'Game'},
       {'icon': Icons.explore_outlined, 'active': Icons.explore, 'label': 'Discover'},
       {'icon': Icons.chat_bubble_outline, 'active': Icons.chat_bubble, 'label': 'Chat'},
-      {'icon': Icons.person_outline, 'active': Icons.person, 'label': 'Profile'},
+      {'icon': Icons.person_outline, 'active': Icons.person, 'label': 'Me'},
     ];
 
     return Scaffold(

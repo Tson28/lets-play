@@ -1,35 +1,5 @@
 import 'package:flutter/material.dart';
 
-class OnlineUserRow extends StatelessWidget {
-  final List<OnlineUser> users;
-  final Function(OnlineUser user)? onUserTap;
-
-  const OnlineUserRow({
-    super.key,
-    required this.users,
-    this.onUserTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 88,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        itemCount: users.length,
-        itemBuilder: (context, index) {
-          final user = users[index];
-          return _OnlineUserAvatar(
-            user: user,
-            onTap: () => onUserTap?.call(user),
-          );
-        },
-      ),
-    );
-  }
-}
-
 class OnlineUser {
   final String id;
   final String name;
@@ -42,11 +12,42 @@ class OnlineUser {
   });
 }
 
-class _OnlineUserAvatar extends StatelessWidget {
+class OnlineUserRow extends StatelessWidget {
+  final List<OnlineUser> users;
+  final Function(OnlineUser)? onUserTap;
+
+  const OnlineUserRow({
+    super.key,
+    required this.users,
+    this.onUserTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: users.length,
+        itemBuilder: (context, index) {
+          final user = users[index];
+          return _OnlineUserItem(
+            user: user,
+            onTap: () => onUserTap?.call(user),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _OnlineUserItem extends StatelessWidget {
   final OnlineUser user;
   final VoidCallback? onTap;
 
-  const _OnlineUserAvatar({
+  const _OnlineUserItem({
     required this.user,
     this.onTap,
   });
@@ -56,93 +57,60 @@ class _OnlineUserAvatar extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 72,
-        margin: const EdgeInsets.only(right: 12),
+        width: 76,
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Stack(
-              clipBehavior: Clip.none,
               children: [
                 Container(
-                  width: 60,
-                  height: 60,
+                  width: 56,
+                  height: 56,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFF6B48FF),
-                        Color(0xFF8B68FF),
-                      ],
-                    ),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF6B48FF).withOpacity(0.35),
+                        color: Colors.black.withOpacity(0.06),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: user.avatarUrl != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(18),
-                          child: Image.network(
-                            user.avatarUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _placeholder(),
-                          ),
-                        )
-                      : _placeholder(),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18),
+                    child: const Center(
+                      child: Icon(Icons.person, color: Color(0xFF6B48FF), size: 28),
+                    ),
+                  ),
                 ),
                 Positioned(
                   bottom: 0,
                   right: 0,
                   child: Container(
-                    width: 16,
-                    height: 16,
+                    width: 14,
+                    height: 14,
                     decoration: BoxDecoration(
                       color: const Color(0xFF4CAF50),
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2.5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF4CAF50).withOpacity(0.6),
-                          blurRadius: 4,
-                        ),
-                      ],
+                      border: Border.all(color: Colors.white, width: 2),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               user.name,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[800],
+                color: Color(0xFF4B5563),
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _placeholder() {
-    return Center(
-      child: Text(
-        user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
         ),
       ),
     );

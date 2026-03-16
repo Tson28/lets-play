@@ -1,148 +1,123 @@
 import 'package:flutter/material.dart';
-import 'package:lets_play/screens/chat/widgets/chat_item.dart';
-import 'package:lets_play/screens/chat/widgets/online_user_row.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final onlineUsers = [
-      const OnlineUser(id: '1', name: 'Minh'),
-      const OnlineUser(id: '2', name: 'Linh'),
-      const OnlineUser(id: '3', name: 'Tuấn'),
-      const OnlineUser(id: '4', name: 'Hương'),
-      const OnlineUser(id: '5', name: 'Đức'),
-    ];
-
-    final chats = [
-      _ChatData(
-        name: 'Minh',
-        lastMessage: 'Ê chơi Bầu Cua không?',
-        time: '2 phút',
-        unreadCount: 2,
-        isOnline: true,
-      ),
-      _ChatData(
-        name: 'Linh',
-        lastMessage: 'Gửi quà cho bạn rồi nè 💝',
-        time: '15 phút',
-        unreadCount: 0,
-        isOnline: true,
-      ),
-      _ChatData(
-        name: 'Tuấn',
-        lastMessage: 'Tối nay chơi game nhé!',
-        time: '1 giờ',
-        unreadCount: 1,
-        isOnline: false,
-      ),
-      _ChatData(
-        name: 'Hương',
-        lastMessage: 'Vòng quay may mắn có quà mới',
-        time: 'Hôm qua',
-        unreadCount: 0,
-        isOnline: true,
-      ),
-      _ChatData(
-        name: 'Đức',
-        lastMessage: '👍',
-        time: '2 ngày',
-        unreadCount: 0,
-        isOnline: false,
-      ),
-    ];
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5FA),
+      backgroundColor: const Color(0xFFFCF7F8), // Very light pinkish white
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(context),
-            const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Đang hoạt động',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-            OnlineUserRow(
-              users: onlineUsers,
-              onUserTap: (user) {
-                // Navigate to chat with user
-              },
-            ),
-            const SizedBox(height: 8),
+            // 1. Header
+            _buildHeader(),
+            
+            // 2. Search Bar
+            _buildSearchBar(),
+            
             Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(top: 8),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x0D000000),
-                      blurRadius: 20,
-                      offset: Offset(0, -4),
-                    ),
-                  ],
-                ),
+              child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF5F5FA),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.search_rounded,
-                              size: 22,
-                              color: Colors.grey[600],
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              'Tìm kiếm tin nhắn...',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
+                    const SizedBox(height: 25),
+                    
+                    // 3. Online Now Area
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        "ONLINE NOW",
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF94A3B8),
+                          letterSpacing: 1.2,
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.only(bottom: 24),
-                        itemCount: chats.length,
-                        itemBuilder: (context, index) {
-                          final chat = chats[index];
-                          return ChatItem(
-                            name: chat.name,
-                            lastMessage: chat.lastMessage,
-                            time: chat.time,
-                            unreadCount: chat.unreadCount,
-                            isOnline: chat.isOnline,
-                            onTap: () {
-                              // Navigate to chat room
-                            },
-                          );
-                        },
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      height: 100,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(left: 20),
+                        children: [
+                          _buildStoryItem("My Story", null, isMine: true),
+                          _buildStoryItem("Mai Linh", null, isOnline: true, color: Colors.blue),
+                          _buildStoryItem("Tuan N.", null, isOnline: true, color: Colors.green),
+                          _buildStoryItem("Sarah Le", null, color: Colors.purple),
+                          _buildStoryItem("Kevin", null, color: Colors.orange),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 20),
+                    
+                    // 4. Recent Chats Area
+                    Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+                      ),
+                      padding: const EdgeInsets.all(25),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "RECENT CHATS",
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF94A3B8),
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          
+                          _buildChatItem(
+                            "Tuan Nguyen",
+                            "Are we playing Bau Cua tonight?",
+                            "2m",
+                            null,
+                            color: Colors.green,
+                            unread: 1,
+                            online: true,
+                          ),
+                          _buildChatItem(
+                            "Mai Linh",
+                            "Happy New Year! sent you a gift.",
+                            "1h",
+                            null,
+                            color: Colors.blue,
+                          ),
+                          _buildChatItem(
+                            "Tet Party Squad 🧧",
+                            "Minh: Who has the lucky money?",
+                            "Yesterday",
+                            "group", // flag for group icon
+                            unread: 3,
+                          ),
+                          _buildChatItem(
+                            "David Tran",
+                            "See you at the fireworks show!",
+                            "Tue",
+                            null,
+                            color: Colors.purple,
+                            isSeen: true,
+                          ),
+                          _buildChatItem(
+                            "Anna Le",
+                            "Thanks for the gems!",
+                            "Tue",
+                            null,
+                            color: Colors.pink,
+                            isSeen: true,
+                          ),
+                          
+                          const SizedBox(height: 100), // Bottom padding
+                        ],
                       ),
                     ),
                   ],
@@ -155,9 +130,9 @@ class ChatListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+      padding: const EdgeInsets.all(20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -165,91 +140,242 @@ class ChatListScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Tin nhắn',
+                "Chats",
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF1E293B),
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                'Kết nối với bạn bè',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+              Row(
+                children: [
+                  Text(
+                    "Lunar New Year Event",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFFFF4C71).withOpacity(0.6),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Text("🧧", style: TextStyle(fontSize: 14)),
+                ],
               ),
             ],
           ),
-          Row(
-            children: [
-              _HeaderIconButton(
-                icon: Icons.group_add_rounded,
-                onTap: () {},
-              ),
-              const SizedBox(width: 8),
-              _HeaderIconButton(
-                icon: Icons.settings_rounded,
-                onTap: () {},
-              ),
-            ],
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+              ],
+            ),
+            child: const Icon(Icons.add, color: Color(0xFFFF4C71), size: 28),
           ),
         ],
       ),
     );
   }
-}
 
-class _HeaderIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _HeaderIconButton({
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Container(
-        width: 44,
-        height: 44,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(30),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
+            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 5)),
           ],
         ),
-        child: Icon(
-          icon,
-          size: 22,
-          color: const Color(0xFF6B48FF),
+        child: Row(
+          children: [
+            const Icon(Icons.search, color: Color(0xFFFF4C71), size: 24),
+            const SizedBox(width: 15),
+            Text(
+              "Search friends & groups...",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF94A3B8).withOpacity(0.6),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
 
-class _ChatData {
-  final String name;
-  final String lastMessage;
-  final String time;
-  final int unreadCount;
-  final bool isOnline;
+  Widget _buildStoryItem(String name, String? imagePath, {bool isMine = false, bool isOnline = false, Color? color}) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 20),
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isOnline ? const Color(0xFFFF4C71) : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                padding: const EdgeInsets.all(3),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: color ?? Colors.blueGrey[100],
+                    image: imagePath != null ? DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover) : null,
+                  ),
+                  child: imagePath == null ? Center(child: Text(name[0], style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white))) : null,
+                ),
+              ),
+              if (isMine)
+                Positioned(
+                  child: Container(
+                    decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                    padding: const EdgeInsets.all(2),
+                    child: const Icon(Icons.add_circle, color: Color(0xFFFF4C71), size: 24),
+                  ),
+                ),
+              if (isOnline && !isMine)
+                Positioned(
+                  right: 5,
+                  bottom: 5,
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 3),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            name,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF64748B),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  _ChatData({
-    required this.name,
-    required this.lastMessage,
-    required this.time,
-    required this.unreadCount,
-    required this.isOnline,
-  });
+  Widget _buildChatItem(String name, String msg, String time, String? imagePath, {int unread = 0, bool online = false, bool isSeen = false, Color? color}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 25),
+      child: Row(
+        children: [
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              if (imagePath == "group")
+                Container(
+                  width: 65,
+                  height: 65,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF59E0B),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.group, color: Colors.white, size: 30),
+                )
+              else
+                CircleAvatar(
+                  radius: 32.5,
+                  backgroundColor: color ?? Colors.blueGrey[100],
+                  backgroundImage: imagePath != null ? AssetImage(imagePath) : null,
+                  child: imagePath == null ? Text(name[0], style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)) : null,
+                ),
+              if (online)
+                Container(
+                  width: 18,
+                  height: 18,
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 3),
+                  ),
+                ),
+              if (unread > 0)
+                Positioned(
+                  right: -2,
+                  top: -2,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(color: Color(0xFFFF4C71), shape: BoxShape.circle),
+                    child: Text(
+                      unread.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF1E293B),
+                      ),
+                    ),
+                    Text(
+                      time,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: unread > 0 ? const Color(0xFFFF4C71) : const Color(0xFF94A3B8),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        msg,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: unread > 0 ? FontWeight.w800 : FontWeight.w500,
+                          color: unread > 0 ? const Color(0xFF1E293B) : const Color(0xFF64748B),
+                        ),
+                      ),
+                    ),
+                    if (isSeen)
+                      const Icon(Icons.done_all, size: 16, color: Color(0xFF94A3B8)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

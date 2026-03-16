@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     AuthTextField(
                       controller: _phoneController,
                       label: "Số điện thoại",
-                      hint: "09xx xxx xxx",
+                      hint: "Nhập số điện thoại",
                       icon: Icons.phone_android_outlined,
                       validator: (value) {
                         if (value == null || value.isEmpty) {

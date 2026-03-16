@@ -2,89 +2,76 @@ import 'package:flutter/material.dart';
 
 class ChatItem extends StatelessWidget {
   final String name;
-  final String? avatarUrl;
   final String lastMessage;
   final String time;
   final int unreadCount;
   final bool isOnline;
+  final String? avatarUrl;
   final VoidCallback? onTap;
 
   const ChatItem({
     super.key,
     required this.name,
-    this.avatarUrl,
     required this.lastMessage,
     required this.time,
     this.unreadCount = 0,
     this.isOnline = false,
+    this.avatarUrl,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
           children: [
             _buildAvatar(),
-            const SizedBox(width: 14),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Text(
-                          name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E1E2C),
                         ),
                       ),
                       Text(
                         time,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           color: unreadCount > 0
                               ? const Color(0xFF6B48FF)
                               : Colors.grey[500],
                           fontWeight:
-                              unreadCount > 0 ? FontWeight.w600 : FontWeight.normal,
+                              unreadCount > 0 ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       Expanded(
                         child: Text(
                           lastMessage,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 15,
                             color: unreadCount > 0
-                                ? Colors.black87
+                                ? const Color(0xFF1E1E2C)
                                 : Colors.grey[600],
-                            fontWeight:
-                                unreadCount > 0 ? FontWeight.w500 : FontWeight.normal,
+                            fontWeight: unreadCount > 0
+                                ? FontWeight.w600
+                                : FontWeight.normal,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -104,39 +91,27 @@ class ChatItem extends StatelessWidget {
 
   Widget _buildAvatar() {
     return Stack(
-      clipBehavior: Clip.none,
       children: [
         Container(
-          width: 54,
-          height: 54,
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF6B48FF),
-                Color(0xFF8B68FF),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(16),
+            color: const Color(0xFF6B48FF).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF6B48FF).withOpacity(0.3),
+                color: Colors.black.withOpacity(0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 3),
               ),
             ],
           ),
-          child: avatarUrl != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.network(
-                    avatarUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _avatarPlaceholder(),
-                  ),
-                )
-              : _avatarPlaceholder(),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: const Center(
+              child: Icon(Icons.person, color: Color(0xFF6B48FF), size: 30),
+            ),
+          ),
         ),
         if (isOnline)
           Positioned(
@@ -159,19 +134,6 @@ class ChatItem extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-
-  Widget _avatarPlaceholder() {
-    return Center(
-      child: Text(
-        name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: const TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
     );
   }
 
