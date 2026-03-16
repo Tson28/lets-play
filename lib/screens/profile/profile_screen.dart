@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'team_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -115,7 +116,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 30),
                   
                   // Settings List
-                  _buildSettingsList(),
+                  _buildSettingsList(context),
                   
                   const SizedBox(height: 40),
                   
@@ -383,7 +384,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsList() {
+  Widget _buildSettingsList(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
@@ -392,21 +393,36 @@ class ProfileScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildSettingsItem(Icons.language, "Language", hasTrailing: true),
+          _buildSettingsItem(context, Icons.language, "Language", hasTrailing: true),
           Divider(color: Colors.white.withOpacity(0.05), height: 1),
-          _buildSettingsItem(Icons.person_outline, "Edit Profile"),
+          _buildSettingsItem(context, Icons.person_outline, "Edit Profile"),
           Divider(color: Colors.white.withOpacity(0.05), height: 1),
-          _buildSettingsItem(Icons.volume_up_outlined, "Sound & Haptics", isSwitch: true),
+          _buildSettingsItem(context, Icons.volume_up_outlined, "Sound & Haptics", isSwitch: true),
           Divider(color: Colors.white.withOpacity(0.05), height: 1),
-          _buildSettingsItem(Icons.help_outline, "Help & Support"),
+          _buildSettingsItem(context, Icons.help_outline, "Help & Support"),
           Divider(color: Colors.white.withOpacity(0.05), height: 1),
-          _buildSettingsItem(Icons.logout, "Log Out", isDestructive: true),
+          _buildSettingsItem(
+            context,
+            Icons.groups_outlined, 
+            "About Team", 
+            onTap: (ctx) => Navigator.push(
+              ctx, 
+              MaterialPageRoute(builder: (context) => const TeamScreen()),
+            ),
+          ),
+          Divider(color: Colors.white.withOpacity(0.05), height: 1),
+          _buildSettingsItem(context, Icons.logout, "Log Out", isDestructive: true),
         ],
       ),
     );
   }
 
-  Widget _buildSettingsItem(IconData icon, String title, {bool hasTrailing = false, bool isSwitch = false, bool isDestructive = false}) {
+  Widget _buildSettingsItem(BuildContext context, IconData icon, String title, {
+    bool hasTrailing = false, 
+    bool isSwitch = false, 
+    bool isDestructive = false,
+    void Function(BuildContext)? onTap,
+  }) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -435,7 +451,7 @@ class ProfileScreen extends StatelessWidget {
               ],
             )
           : Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.3)),
-      onTap: () {},
+      onTap: () => onTap?.call(context),
     );
   }
 }
