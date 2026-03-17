@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'team_screen.dart';
+import 'settings_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String _displayName = 'NguyenVanA';
+  String _language = 'Vietnamese';
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +55,36 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          _buildCircleButton(Icons.notifications_outlined),
+                          _buildCircleButton(
+                            Icons.notifications_outlined,
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('No new notifications yet.')),
+                              );
+                            },
+                          ),
                           const SizedBox(width: 12),
-                          _buildCircleButton(Icons.settings_outlined),
+                          _buildCircleButton(
+                            Icons.settings_outlined,
+                            onTap: () async {
+                              final result = await Navigator.push<Map<String, String>>(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SettingsScreen(
+                                    initialName: _displayName,
+                                    initialLanguage: _language,
+                                  ),
+                                ),
+                              );
+
+                              if (result != null) {
+                                setState(() {
+                                  _displayName = result['name'] ?? _displayName;
+                                  _language = result['language'] ?? _language;
+                                });
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ],
@@ -137,17 +173,22 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCircleButton(IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.12),
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+  Widget _buildCircleButton(IconData icon, {VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(100),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.12),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
+        ),
+        child: Icon(icon, color: Colors.white, size: 24),
       ),
-      child: Icon(icon, color: Colors.white, size: 24),
     );
   }
+
 
   Widget _buildProfileHeader() {
     return Column(
@@ -199,9 +240,9 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20),
-        const Text(
-          "NguyenVanA",
-          style: TextStyle(
+        Text(
+          _displayName,
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w900,
             color: Colors.white,
@@ -393,9 +434,9 @@ class ProfileScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildSettingsItem(context, Icons.language, "Language", hasTrailing: true),
+          _buildSettingsItem(context, Icons.language, "Language", subtitle: _language, hasTrailing: true, onTap: _showLanguageDialog),
           Divider(color: Colors.white.withOpacity(0.05), height: 1),
-          _buildSettingsItem(context, Icons.person_outline, "Edit Profile"),
+          _buildSettingsItem(context, Icons.person_outline, "Edit Profile", onTap: _showEditProfileDialog),
           Divider(color: Colors.white.withOpacity(0.05), height: 1),
           _buildSettingsItem(context, Icons.volume_up_outlined, "Sound & Haptics", isSwitch: true),
           Divider(color: Colors.white.withOpacity(0.05), height: 1),
@@ -417,7 +458,102 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsItem(BuildContext context, IconData icon, String title, {
+  void _showLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF381024),
+          title: const Text(
+            'Select Language',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('Vietnamese', style: TextStyle(color: Colors.white)),
+                leading: const Icon(Icons.flag, color: Colors.blue),
+                trailing: _language == 'Vietnamese'
+                    ? const Icon(Icons.check, color: Colors.white)
+                    : null,
+                onTap: () {
+                  setState(() {
+                    _language = 'Vietnamese';
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                title: const Text('English', style: TextStyle(color: Colors.white)),
+                leading: const Icon(Icons.flag, color: Colors.red),
+                trailing: _language == 'English'
+                    ? const Icon(Icons.check, color: Colors.white)
+                    : null,
+                onTap: () {
+                  setState(() {
+                    _language = 'English';
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showEditProfileDialog(BuildContext context) {
+    final TextEditingController nameController = TextEditingController(text: _displayName);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF381024),
+          title: const Text(
+            'Edit Profile',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: TextField(
+            controller: nameController,
+            style: const TextStyle(color: Colors.white),
+            decoration: const InputDecoration(
+              labelText: 'Name',
+              labelStyle: TextStyle(color: Colors.white70),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white70),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _displayName = nameController.text.trim().isEmpty ? _displayName : nameController.text.trim();
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Save', style: TextStyle(color: Colors.pinkAccent)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildSettingsItem(
+    BuildContext context,
+    IconData icon,
+    String title, {
+    String? subtitle,
     bool hasTrailing = false, 
     bool isSwitch = false, 
     bool isDestructive = false,
@@ -439,6 +575,7 @@ class ProfileScreen extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
+      subtitle: subtitle != null ? Text(subtitle, style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12)) : null,
       trailing: isSwitch 
         ? Switch(value: true, onChanged: (v){}, activeColor: Colors.pinkAccent)
         : hasTrailing 

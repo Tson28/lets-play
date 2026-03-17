@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lets_play/screens/chat/chat_detail_screen.dart';
 
 class DiscoverScreen extends StatelessWidget {
   const DiscoverScreen({super.key});
@@ -24,7 +25,7 @@ class DiscoverScreen extends StatelessWidget {
                     // 2. Tet Festival Section
                     _buildSectionHeader("Tet Festival 2024", true),
                     const SizedBox(height: 15),
-                    _buildEventCard(
+                    _buildEventCard(context,
                       "Lucky Money Hunt",
                       "Win big prizes in our daily red envelope hunt!",
                       "EVENT",
@@ -41,11 +42,11 @@ class DiscoverScreen extends StatelessWidget {
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-                          _buildFriendItem("Linh Nhi", Colors.blue[100]!),
-                          _buildFriendItem("Minh Tuan", Colors.green[100]!),
-                          _buildFriendItem("Sarah", Colors.purple[100]!),
-                          _buildFriendItem("Dave", Colors.orange[100]!),
-                          _buildFriendItem("Anna", Colors.pink[100]!),
+                          _buildFriendItem(context, "Linh Nhi", Colors.blue[100]!),
+                          _buildFriendItem(context, "Minh Tuan", Colors.green[100]!),
+                          _buildFriendItem(context, "Sarah", Colors.purple[100]!),
+                          _buildFriendItem(context, "Dave", Colors.orange[100]!),
+                          _buildFriendItem(context, "Anna", Colors.pink[100]!),
                         ],
                       ),
                     ),
@@ -177,114 +178,132 @@ class DiscoverScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEventCard(String title, String subtitle, String tag, String? imagePath) {
-    return Container(
-      height: 200,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: const Color(0xFF1E293B),
-        image: imagePath != null ? DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover) : null,
-        gradient: imagePath == null ? const LinearGradient(
-          colors: [Color(0xFFFE4C71), Color(0xFF580345)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ) : null,
-      ),
-      child: Stack(
-        children: [
-          if (imagePath == null)
-             Positioned(
-               right: -20,
-               top: -20,
-               child: Icon(Icons.local_florist, color: Colors.white.withOpacity(0.1), size: 150),
-             ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              gradient: LinearGradient(
-                colors: [Colors.black.withOpacity(0.6), Colors.transparent],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
+  Widget _buildEventCard(BuildContext context, String title, String subtitle, String tag, String? imagePath) {
+    return GestureDetector(
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tham gia sự kiện này!')),
+        );
+      },
+      child: Container(
+        height: 200,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: const Color(0xFF1E293B),
+          image: imagePath != null ? DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover) : null,
+          gradient: imagePath == null ? const LinearGradient(
+            colors: [Color(0xFFFE4C71), Color(0xFF580345)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ) : null,
+        ),
+        child: Stack(
+          children: [
+            if (imagePath == null)
+               Positioned(
+                 right: -20,
+                 top: -20,
+                 child: Icon(Icons.local_florist, color: Colors.white.withOpacity(0.1), size: 150),
+               ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                gradient: LinearGradient(
+                  colors: [Colors.black.withOpacity(0.6), Colors.transparent],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF4C71),
-                    borderRadius: BorderRadius.circular(8),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF4C71),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      tag,
+                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  child: Text(
-                    tag,
-                    style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                  const SizedBox(height: 10),
+                  Text(
+                    title,
+                    style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  title,
-                  style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Positioned(
-             right: 20,
-             bottom: 20,
-             child: Icon(Icons.arrow_circle_right, color: Colors.white.withOpacity(0.5), size: 40),
-          ),
-        ],
+            Positioned(
+               right: 20,
+               bottom: 20,
+               child: Icon(Icons.arrow_circle_right, color: Colors.white.withOpacity(0.5), size: 40),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFriendItem(String name, Color bgColor) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 20),
-      child: Column(
-        children: [
-          Stack(
-            alignment: Alignment.bottomRight,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFFF4C71), width: 2),
-                ),
-                child: CircleAvatar(
-                  radius: 35,
-                  backgroundColor: bgColor,
-                  child: Text(name[0], style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFF4C71),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.add, color: Colors.white, size: 14),
-              ),
-            ],
+  Widget _buildFriendItem(BuildContext context, String name, Color bgColor) {
+    return InkWell(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatDetailScreen(
+            name: name,
+            color: bgColor,
           ),
-          const SizedBox(height: 8),
-          Text(
-            name,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
-          ),
-        ],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20),
+        child: Column(
+          children: [
+            Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFFFF4C71), width: 2),
+                  ),
+                  child: CircleAvatar(
+                    radius: 35,
+                    backgroundColor: bgColor,
+                    child: Text(name[0], style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFF4C71),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.add, color: Colors.white, size: 14),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              name,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+            ),
+          ],
+        ),
       ),
     );
   }

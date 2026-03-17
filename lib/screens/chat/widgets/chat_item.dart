@@ -7,6 +7,7 @@ class ChatItem extends StatelessWidget {
   final int unreadCount;
   final bool isOnline;
   final String? avatarUrl;
+  final bool isGroup;
   final VoidCallback? onTap;
 
   const ChatItem({
@@ -17,6 +18,7 @@ class ChatItem extends StatelessWidget {
     this.unreadCount = 0,
     this.isOnline = false,
     this.avatarUrl,
+    this.isGroup = false,
     this.onTap,
   });
 
@@ -25,7 +27,7 @@ class ChatItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
         child: Row(
           children: [
             _buildAvatar(),
@@ -36,15 +38,21 @@ class ChatItem extends StatelessWidget {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E1E2C),
+                      Expanded(
+                        child: Text(
+                          name,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1E1E2C),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         time,
                         style: TextStyle(
@@ -55,6 +63,7 @@ class ChatItem extends StatelessWidget {
                           fontWeight:
                               unreadCount > 0 ? FontWeight.bold : FontWeight.normal,
                         ),
+                        textAlign: TextAlign.right,
                       ),
                     ],
                   ),
@@ -96,7 +105,7 @@ class ChatItem extends StatelessWidget {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            color: const Color(0xFF6B48FF).withOpacity(0.1),
+            color: isGroup ? const Color(0xFFF59E0B) : const Color(0xFF6B48FF).withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -108,12 +117,14 @@ class ChatItem extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: const Center(
-              child: Icon(Icons.person, color: Color(0xFF6B48FF), size: 30),
-            ),
+            child: isGroup
+                ? const Center(child: Icon(Icons.group, color: Colors.white, size: 30))
+                : (avatarUrl != null
+                    ? Image.asset(avatarUrl!, fit: BoxFit.cover)
+                    : Center(child: Text(name[0], style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF6B48FF))))),
           ),
         ),
-        if (isOnline)
+        if (isOnline && !isGroup)
           Positioned(
             bottom: 2,
             right: 2,

@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lets_play/screens/gameplay/gameplay_screen.dart';
+import 'package:lets_play/screens/gameplay/xoc_dia_screen.dart';
+import 'package:lets_play/screens/gameplay/game_2048_screen.dart';
+import 'package:lets_play/screens/gameplay/quick_draw_screen.dart';
+import 'package:lets_play/screens/gameplay/lucky_wheel_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -21,7 +26,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 25),
               
               // 2. Main Lucky Spin Banner
-              _buildLuckySpinBanner(),
+              _buildLuckySpinBanner(context),
               
               const SizedBox(height: 30),
               
@@ -65,10 +70,10 @@ class HomeScreen extends StatelessWidget {
                 crossAxisSpacing: 15,
                 childAspectRatio: 0.82,
                 children: [
-                  _buildGameCard("Memory Flip", "Luyện trí nhớ siêu phàm", "static_assets/images/game_memory.png", const Color(0xfffce4ea)),
-                _buildGameCard("Riddle Master", "Giải đố hại não", "static_assets/images/game_riddle.png", const Color(0xffe0f7fa)),
-                _buildGameCard("Quick Draw", "Họa sĩ tài ba", "static_assets/images/game_quick_draw.png", const Color(0xfffff3e0)),
-                _buildGameCard("2048", "Thử thách ghép số", "static_assets/images/game_2048.png", const Color(0xfff1f8e9)),
+                  _buildGameCard(context, "Memory Flip", "Luyện trí nhớ siêu phàm", "static_assets/images/game_memory.png", const Color(0xfffce4ea)),
+                _buildGameCard(context, "Riddle Master", "Giải đố hại não", "static_assets/images/game_riddle.png", const Color(0xffe0f7fa)),
+                _buildGameCard(context, "Quick Draw", "Họa sĩ tài ba", "static_assets/images/game_quick_draw.png", const Color(0xfffff3e0)),
+                _buildGameCard(context, "2048", "Thử thách ghép số", "static_assets/images/game_2048.png", const Color(0xfff1f8e9)),
                 ],
               ),
               
@@ -119,9 +124,9 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     Row(
                       children: [
-                        Expanded(child: _buildTetGameItem("Bầu Cua", "1.2k đang chơi", "static_assets/images/bau_cua.png")),
+                        Expanded(child: _buildTetGameItem(context, "Bầu Cua", "1.2k đang chơi", "static_assets/images/bau_cua.png")),
                         const SizedBox(width: 15),
-                        Expanded(child: _buildTetGameItem("Xóc Đĩa", "3.5k đang chơi", "static_assets/images/xoc_dia.png")),
+                        Expanded(child: _buildTetGameItem(context, "Xóc Đĩa", "3.5k đang chơi", "static_assets/images/xoc_dia.png")),
                       ],
                     ),
                   ],
@@ -208,7 +213,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLuckySpinBanner() {
+  Widget _buildLuckySpinBanner(BuildContext context) {
     return Container(
       width: double.infinity,
       height: 240, // Increased height more to be safe
@@ -283,29 +288,37 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.rotate_right, color: Color(0xFFFE4C71), size: 18),
-                      SizedBox(width: 8),
-                      Text(
-                        "Quay Ngay",
-                        style: TextStyle(fontWeight: FontWeight.w900, color: Color(0xFFFE4C71)),
-                      ),
-                    ],
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LuckyWheelScreen()),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.rotate_right, color: Color(0xFFFE4C71), size: 18),
+                        SizedBox(width: 8),
+                        Text(
+                          "Quay Ngay",
+                          style: TextStyle(fontWeight: FontWeight.w900, color: Color(0xFFFE4C71)),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -316,97 +329,135 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildGameCard(String title, String subtitle, String? imagePath, Color bgColor) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
-              ),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
-                child: imagePath != null 
-                  ? Image.asset(imagePath, fit: BoxFit.cover)
-                  : _buildFallbackImage(title),
+  Widget _buildGameCard(BuildContext context, String title, String subtitle, String? imagePath, Color bgColor) {
+    return GestureDetector(
+      onTap: () {
+        Widget screen;
+        switch (title) {
+          case "2048":
+            screen = const Game2048Screen();
+            break;
+          case "Quick Draw":
+            screen = const QuickDrawScreen();
+            break;
+          default:
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('$title coming soon!')),
+            );
+            return;
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => screen),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
+                ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
+                  child: imagePath != null 
+                    ? Image.asset(imagePath, fit: BoxFit.cover)
+                    : _buildFallbackImage(title),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: Color(0xFF1E293B)),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 11, color: Colors.blueGrey.withOpacity(0.6)),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: Color(0xFF1E293B)),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 11, color: Colors.blueGrey.withOpacity(0.6)),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildTetGameItem(String title, String players, String? imagePath) {
-    return Container(
-      height: 120,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (imagePath != null)
-             ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity, height: double.infinity),
-             ),
-          Container(
-             decoration: BoxDecoration(
-               borderRadius: BorderRadius.circular(20),
-               color: Colors.black.withOpacity(0.4),
-             ),
-          ),
-          Column(
-             mainAxisAlignment: MainAxisAlignment.center,
-             children: [
-               Icon(
-                 title == "Bầu Cua" ? Icons.casino_outlined : Icons.monetization_on_outlined,
-                 color: Colors.white70,
-                 size: 24,
+  Widget _buildTetGameItem(BuildContext context, String title, String players, String? imagePath) {
+    return GestureDetector(
+      onTap: () {
+        Widget screen;
+        if (title == "Bầu Cua") {
+          screen = const GameplayScreen();
+        } else if (title == "Xóc Đĩa") {
+          screen = const XocDiaScreen();
+        } else {
+          return;
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => screen),
+        );
+      },
+      child: Container(
+        height: 120,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            if (imagePath != null)
+               ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity, height: double.infinity),
                ),
-               const SizedBox(height: 8),
-               Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)),
-               const SizedBox(height: 4),
-               Text(players, style: const TextStyle(color: Colors.white70, fontSize: 10)),
-             ],
-          ),
-        ],
+            Container(
+               decoration: BoxDecoration(
+                 borderRadius: BorderRadius.circular(20),
+                 color: Colors.black.withOpacity(0.4),
+               ),
+            ),
+            Column(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 Icon(
+                   title == "Bầu Cua" ? Icons.casino_outlined : Icons.monetization_on_outlined,
+                   color: Colors.white70,
+                   size: 24,
+                 ),
+                 const SizedBox(height: 8),
+                 Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)),
+                 const SizedBox(height: 4),
+                 Text(players, style: const TextStyle(color: Colors.white70, fontSize: 10)),
+               ],
+            ),
+          ],
+        ),
       ),
     );
   }

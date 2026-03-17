@@ -143,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Footer
                     Text(
-                      "\u00a9 2026 Let's Play Inc.",
+                      "\u00a9 2026 Let's Play Inc\\.",
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.4),
                         fontSize: 12,
