@@ -22,12 +22,12 @@ class _GameplayScreenState extends State<GameplayScreen> with TickerProviderStat
   late AnimationController _bounceController;
 
   final List<AnimalOption> _animals = [
-    AnimalOption(id: 'bau', name: 'Bầu', emoji: '🎃', color: Color(0xFFD4AF37)),
-    AnimalOption(id: 'cua', name: 'Cua', emoji: '🦀', color: Color(0xFFC4512A)),
-    AnimalOption(id: 'ca', name: 'Cá', emoji: '🐟', color: Color(0xFF4A90E2)),
-    AnimalOption(id: 'ga', name: 'Gà', emoji: '🐔', color: Color(0xFFFF7043)),
-    AnimalOption(id: 'tom', name: 'Tôm', emoji: '🦐', color: Color(0xFFD4AF37)),
-    AnimalOption(id: 'nai', name: 'Nai', emoji: '🦌', color: Color(0xFF8B5A3C)),
+    AnimalOption(id: 'bau', name: 'Bầu', emoji: '🎃', imageAsset: 'static_assets/images/bau.jpg', color: Color(0xFFD4AF37)),
+    AnimalOption(id: 'cua', name: 'Cua', emoji: '🦀', imageAsset: 'static_assets/images/cua.jpg', color: Color(0xFFC4512A)),
+    AnimalOption(id: 'ca', name: 'Cá', emoji: '🐟', imageAsset: 'static_assets/images/ca.jpg', color: Color(0xFF4A90E2)),
+    AnimalOption(id: 'ga', name: 'Gà', emoji: '🐔', imageAsset: 'static_assets/images/ga.jpg', color: Color(0xFFFF7043)),
+    AnimalOption(id: 'tom', name: 'Tôm', emoji: '🦐', imageAsset: 'static_assets/images/tom.jpg', color: Color(0xFFD4AF37)),
+    AnimalOption(id: 'huou', name: 'Hươu', emoji: '🦌', imageAsset: 'static_assets/images/huou.jpg', color: Color(0xFF8B5A3C)),
   ];
 
   @override
@@ -157,8 +157,8 @@ class _GameplayScreenState extends State<GameplayScreen> with TickerProviderStat
       _isResolving = false;
       _winningAnimal = winningId;
       _resultMessage = didWin
-          ? '🎉 THẮNG! ${winning.emoji} ${winning.name.toUpperCase()}\n+${winAmount} xu!'
-          : '😢 Thua rồi! ${winning.emoji} ${winning.name.toUpperCase()} thắng';
+          ? '🎉 THẮNG! ${winning.name.toUpperCase()}\n+${winAmount} xu!'
+          : '😢 Thua rồi! ${winning.name.toUpperCase()} thắng';
       if (didWin) {
         _points += winAmount;
       }
@@ -186,9 +186,20 @@ class _GameplayScreenState extends State<GameplayScreen> with TickerProviderStat
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    winning.emoji,
-                    style: const TextStyle(fontSize: 48),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image.asset(
+                      winning.imageAsset,
+                      width: 68,
+                      height: 68,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Text(
+                          winning.emoji,
+                          style: const TextStyle(fontSize: 48),
+                        );
+                      },
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -235,10 +246,9 @@ class _GameplayScreenState extends State<GameplayScreen> with TickerProviderStat
       child: Scaffold(
         body: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFF8B3A3A), Color(0xFFC4512A)],
+            image: DecorationImage(
+              image: AssetImage('static_assets/images/back.jpg'),
+              fit: BoxFit.cover,
             ),
           ),
           child: SafeArea(
@@ -350,15 +360,34 @@ class _GameplayScreenState extends State<GameplayScreen> with TickerProviderStat
                                     ],
                                   ),
                                 if (_winningAnimal != null && !_isResolving)
-                                  Text(
-                                    _resultMessage ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF8B3A3A),
-                                      height: 1.6,
-                                    ),
-                                    textAlign: TextAlign.center,
+                                  Column(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(50),
+                                        child: Image.asset(
+                                          _animals.firstWhere((a) => a.id == _winningAnimal!).imageAsset,
+                                          width: 70,
+                                          height: 70,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) => Icon(
+                                            Icons.help_outline,
+                                            color: Colors.black54,
+                                            size: 40,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        _resultMessage ?? '',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF8B3A3A),
+                                          height: 1.6,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
                                   ),
                               ],
                             ),
@@ -371,9 +400,9 @@ class _GameplayScreenState extends State<GameplayScreen> with TickerProviderStat
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
+                              border: Border.all(color: Colors.white.withOpacity(0.6), width: 2),
                             ),
                             padding: const EdgeInsets.all(12),
                             child: GridView.builder(
@@ -397,26 +426,32 @@ class _GameplayScreenState extends State<GameplayScreen> with TickerProviderStat
                                     duration: const Duration(milliseconds: 200),
                                     decoration: BoxDecoration(
                                       color: isWinner
-                                          ? Colors.yellow.withOpacity(0.8)
+                                          ? Colors.yellow.withOpacity(0.9)
                                           : (betAmount > 0
-                                              ? animal.color.withOpacity(0.6)
-                                              : Colors.white.withOpacity(0.08)),
+                                              ? animal.color.withOpacity(0.88)
+                                              : animal.color.withOpacity(0.35)),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color: isWinner
                                             ? Colors.yellow
-                                            : (betAmount > 0 ? animal.color : Colors.white.withOpacity(0.2)),
-                                        width: isWinner ? 3 : 2,
+                                            : (betAmount > 0
+                                                ? animal.color.withOpacity(0.95)
+                                                : animal.color.withOpacity(0.75)),
+                                        width: isWinner ? 3 : (betAmount > 0 ? 3 : 2),
                                       ),
-                                      boxShadow: isWinner
-                                          ? [
-                                              BoxShadow(
-                                                color: Colors.yellow.withOpacity(0.6),
-                                                blurRadius: 15,
-                                                spreadRadius: 2,
-                                              ),
-                                            ]
-                                          : null,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.35),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                        if (isWinner)
+                                          BoxShadow(
+                                            color: Colors.yellow.withOpacity(0.6),
+                                            blurRadius: 15,
+                                            spreadRadius: 2,
+                                          ),
+                                      ],
                                     ),
                                     child: Stack(
                                       children: [
@@ -424,9 +459,32 @@ class _GameplayScreenState extends State<GameplayScreen> with TickerProviderStat
                                           child: Column(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              Text(
-                                                animal.emoji,
-                                                style: const TextStyle(fontSize: 48),
+                                              Container(
+                                                width: 56,
+                                                height: 56,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.white,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black.withOpacity(0.2),
+                                                      blurRadius: 6,
+                                                      offset: const Offset(0, 3),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: ClipOval(
+                                                  child: Image.asset(
+                                                    animal.imageAsset,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context, error, stackTrace) => Center(
+                                                      child: Text(
+                                                        animal.emoji,
+                                                        style: const TextStyle(fontSize: 30),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
                                               const SizedBox(height: 8),
                                               Text(
@@ -442,21 +500,27 @@ class _GameplayScreenState extends State<GameplayScreen> with TickerProviderStat
                                         ),
                                         if (betAmount > 0)
                                           Positioned(
-                                            bottom: 8,
+                                            top: 8,
                                             right: 8,
                                             child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                                               decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(8),
+                                                color: Colors.black.withOpacity(0.5),
+                                                borderRadius: BorderRadius.circular(10),
                                               ),
-                                              child: Text(
-                                                '$betAmount',
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color(0xFF8B3A3A),
-                                                ),
+                                              child: Row(
+                                                children: [
+                                                  const Icon(Icons.attach_money, color: Colors.lightGreenAccent, size: 14),
+                                                  const SizedBox(width: 3),
+                                                  Text(
+                                                    '$betAmount',
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
@@ -492,24 +556,42 @@ class _GameplayScreenState extends State<GameplayScreen> with TickerProviderStat
                                   final isSelected = _selectedChip == value;
                                   return GestureDetector(
                                     onTap: () => setState(() => _selectedChip = value),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    child: AnimatedContainer(
+                                      duration: const Duration(milliseconds: 180),
+                                      width: 64,
+                                      height: 64,
                                       decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
                                         color: isSelected
-                                            ? Colors.white
-                                            : Colors.white.withOpacity(0.15),
-                                        borderRadius: BorderRadius.circular(8),
+                                            ? Colors.amberAccent.withOpacity(0.95)
+                                            : Colors.white.withOpacity(0.2),
                                         border: Border.all(
-                                          color: isSelected ? Colors.white : Colors.white.withOpacity(0.3),
-                                          width: isSelected ? 2 : 1,
+                                          color: isSelected ? Colors.orange.shade700 : Colors.white70,
+                                          width: isSelected ? 3 : 1.5,
                                         ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(isSelected ? 0.35 : 0.15),
+                                            blurRadius: isSelected ? 12 : 6,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
                                       ),
-                                      child: Text(
-                                        '${value ~/ 1000}k',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color: isSelected ? Color(0xFFDC2F02) : Colors.white,
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(Icons.monetization_on, size: 24, color: Colors.white),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              '${value ~/ 1000}k',
+                                              style: TextStyle(
+                                                color: isSelected ? Colors.black87 : Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -628,12 +710,14 @@ class AnimalOption {
   final String id;
   final String name;
   final String emoji;
+  final String imageAsset;
   final Color color;
 
   AnimalOption({
     required this.id,
     required this.name,
     required this.emoji,
+    required this.imageAsset,
     required this.color,
   });
 }

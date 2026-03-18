@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:lets_play/screens/gameplay/gameplay_screen.dart';
 import 'package:lets_play/screens/gameplay/xoc_dia_screen.dart';
 import 'package:lets_play/screens/gameplay/game_2048_screen.dart';
 import 'package:lets_play/screens/gameplay/quick_draw_screen.dart';
 import 'package:lets_play/screens/gameplay/lucky_wheel_screen.dart';
+import 'package:lets_play/screens/gameplay/memory_flip_screen.dart';
+import 'package:lets_play/screens/gameplay/riddle_master_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -290,9 +294,14 @@ class HomeScreen extends StatelessWidget {
                 const Spacer(),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LuckyWheelScreen()),
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (context) => const Dialog(
+                        insetPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                        backgroundColor: Colors.transparent,
+                        child: _LuckyWheelOverlay(),
+                      ),
                     );
                   },
                   child: Container(
@@ -339,6 +348,12 @@ class HomeScreen extends StatelessWidget {
             break;
           case "Quick Draw":
             screen = const QuickDrawScreen();
+            break;
+          case "Memory Flip":
+            screen = const MemoryFlipScreen();
+            break;
+          case "Riddle Master":
+            screen = const RiddleMasterScreen();
             break;
           default:
             ScaffoldMessenger.of(context).showSnackBar(
@@ -496,6 +511,163 @@ class HomeScreen extends StatelessWidget {
             style: TextStyle(color: Colors.blueGrey[300], fontWeight: FontWeight.bold),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _LuckyWheelOverlay extends StatefulWidget {
+  const _LuckyWheelOverlay({super.key});
+
+  @override
+  State<_LuckyWheelOverlay> createState() => _LuckyWheelOverlayState();
+}
+
+class _LuckyWheelOverlayState extends State<_LuckyWheelOverlay> with TickerProviderStateMixin {
+  late AnimationController _wheelController;
+  late Animation<double> _wheelAnimation;
+  late AnimationController _decorController;
+  bool _isSpinning = false;
+  String? _result;
+  int _spinsRemaining = 3;
+  double _currentRotation = 0.0;
+
+  final List<Map<String, dynamic>> _wheelItems = [
+    {'label': '50 xu', 'color': const Color(0xFFFF6B6B)},
+    {'label': '100 xu', 'color': const Color(0xFF4ECDC4)},
+    {'label': 'Free Game', 'color': const Color(0xFFFFD93D)},
+    {'label': '500 xu', 'color': const Color(0xFF6BCB77)},
+    {'label': 'Bonus', 'color': const Color(0xFF9D84B7)},
+    {'label': 'Try Again', 'color': const Color(0xFFFFA502)},
+    {'label': '200 xu', 'color': const Color(0xFF00D2D3)},
+    {'label': '1000 xu', 'color': const Color(0xFFF2CC8F)},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _wheelController = AnimationController(duration: const Duration(seconds: 4), vsync: this);
+    _decorController = AnimationController(duration: const Duration(seconds: 7), vsync: this)..repeat();
+    _wheelAnimation = Tween<double>(begin: 0, end: 0).animate(_wheelController);
+  }
+
+  @override
+  void dispose() {
+    _wheelController.dispose();
+    _decorController.dispose();
+    super.dispose();
+  }
+
+  void _spinWheel() {
+    if (_isSpinning || _spinsRemaining <= 0) return;
+
+    final random = Random();
+    final totalTurns = 5 + random.nextDouble();
+
+    setState(() {
+      _isSpinning = true;
+      _result = null;
+      _spinsRemaining--;
+      _wheelAnimation = Tween<double>(begin: _currentRotation, end: _currentRotation + totalTurns)
+          .animate(CurvedAnimation(parent: _wheelController, curve: Curves.easeOutQuart));
+    });
+
+    _wheelController.forward(from: 0.0).whenComplete(() {
+      if (!mounted) return;
+
+      _currentRotation += totalTurns;
+      final finalPosition = _currentRotation % 1;
+      final selectedIndex = (((1 - finalPosition) * _wheelItems.length).floor()) % _wheelItems.length;
+
+      setState(() {
+        _result = _wheelItems[selectedIndex]['label'];
+        _isSpinning = false;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        color: Colors.transparent,
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF6A11CB), Color(0xFF2575FC)]),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    const Expanded(
+                      child: Text('Vòng Quay May Mắn', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                    const SizedBox(width: 48),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text('Lượt còn lại: $_spinsRemaining', style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w600)),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: 300,
+                height: 300,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      height: 300,
+                      child: AnimatedBuilder(
+                        animation: _decorController,
+                        builder: (context, child) => Transform.rotate(angle: _decorController.value * 2 * pi, child: child),
+                        child: CustomPaint(painter: GlowRingPainter()),
+                      ),
+                    ),
+                    Container(width: 270, height: 270, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.18))),
+                    RotationTransition(turns: _wheelAnimation, child: CustomPaint(size: const Size(250, 250), painter: WheelPainter(_wheelItems))),
+                    Positioned(top: 0, child: CustomPaint(size: const Size(30, 40), painter: PointerPainter())),
+                    Container(width: 45, height: 45, decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black26)]), child: const Icon(Icons.star, color: Colors.orange, size: 26)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              if (_result != null)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.8), borderRadius: BorderRadius.circular(15)),
+                  child: Text('Kết quả: $_result', style: const TextStyle(color: Color(0xFF0B2F64), fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: (_isSpinning || _spinsRemaining <= 0) ? null : _spinWheel,
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA726), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
+                    child: Text(_isSpinning ? 'ĐANG QUAY...' : (_spinsRemaining > 0 ? 'QUAY NGAY' : 'HẾT LƯỢT'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
       ),
     );
   }

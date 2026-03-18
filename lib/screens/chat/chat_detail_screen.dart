@@ -4,10 +4,14 @@ class ChatDetailScreen extends StatefulWidget {
   final String name;
   final String? avatarUrl;
   final Color? color;
+  final List<Map<String, dynamic>> initialMessages;
+  final ValueChanged<String>? onNewMessage;
 
   const ChatDetailScreen({
     super.key,
     required this.name,
+    this.initialMessages = const [],
+    this.onNewMessage,
     this.avatarUrl,
     this.color,
   });
@@ -18,21 +22,38 @@ class ChatDetailScreen extends StatefulWidget {
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final List<Map<String, dynamic>> _messages = [
-    {'text': 'Hello!', 'isMe': false, 'time': '10:00 AM'},
-    {'text': 'Hi there!', 'isMe': true, 'time': '10:01 AM'},
-  ];
+  final ScrollController _scrollController = ScrollController();
+  late List<Map<String, dynamic>> _messages;
+
+  @override
+  void initState() {
+    super.initState();
+    _messages = List<Map<String, dynamic>>.from(widget.initialMessages);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  void _scrollToBottom() {
+    if (!_scrollController.hasClients) return;
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 160),
+      curve: Curves.easeOut,
+    );
+  }
 
   void _sendMessage() {
-    if (_messageController.text.trim().isNotEmpty) {
+    final text = _messageController.text.trim();
+    if (text.isNotEmpty) {
       setState(() {
         _messages.add({
-          'text': _messageController.text.trim(),
+          'text': text,
           'isMe': true,
           'time': DateTime.now().toString().substring(11, 16),
         });
       });
+      widget.onNewMessage?.call(text);
       _messageController.clear();
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     }
   }
 
@@ -102,6 +123,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               // Message list
               Expanded(
                 child: ListView.builder(
+                  controller: _scrollController,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lets_play/screens/chat/chat_detail_screen.dart';
+import 'package:lets_play/screens/discover/event_room_screen.dart';
 
 class DiscoverScreen extends StatelessWidget {
   const DiscoverScreen({super.key});
@@ -77,6 +78,7 @@ class DiscoverScreen extends StatelessWidget {
                     const SizedBox(height: 15),
                     
                     _buildRoomCard(
+                      context,
                       "Hanoi Gamers Chill 🎮",
                       "Join us for a quick Werewolf game! Newbies welcome.",
                       "WEREWOLF",
@@ -88,6 +90,7 @@ class DiscoverScreen extends StatelessWidget {
                     const SizedBox(height: 15),
                     
                     _buildRoomCard(
+                      context,
                       "Hỏi xoáy đáp xoay 🎙️",
                       "Phòng tám chuyện đêm khuya, giải đáp thắc mắc.",
                       "TALK SHOW",
@@ -181,8 +184,11 @@ class DiscoverScreen extends StatelessWidget {
   Widget _buildEventCard(BuildContext context, String title, String subtitle, String tag, String? imagePath) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tham gia sự kiện này!')),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EventRoomScreen(eventTitle: title, eventDescription: subtitle),
+          ),
         );
       },
       child: Container(
@@ -193,7 +199,7 @@ class DiscoverScreen extends StatelessWidget {
           color: const Color(0xFF1E293B),
           image: imagePath != null ? DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover) : null,
           gradient: imagePath == null ? const LinearGradient(
-            colors: [Color(0xFFFE4C71), Color(0xFF580345)],
+            colors: [Color(0xFFFFD2E8), Color(0xFFB988FF)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ) : null,
@@ -206,6 +212,35 @@ class DiscoverScreen extends StatelessWidget {
                  top: -20,
                  child: Icon(Icons.local_florist, color: Colors.white.withOpacity(0.1), size: 150),
                ),
+            Positioned(
+              top: 16,
+              left: 16,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: -12, end: 0),
+                duration: const Duration(milliseconds: 700),
+                curve: Curves.easeOut,
+                builder: (context, value, child) {
+                  return Transform.translate(
+                    offset: Offset(value, 0),
+                    child: Opacity(
+                      opacity: (value + 12) / 12,
+                      child: child,
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.21),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    '✨ Lucky Money Blast ✨',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                ),
+              ),
+            ),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
@@ -234,9 +269,17 @@ class DiscoverScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    title,
-                    style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
+                  ShaderMask(
+                    blendMode: BlendMode.srcIn,
+                    shaderCallback: (bounds) => const LinearGradient(
+                      colors: [Color(0xFFFF6EB4), Color(0xFFCEA3FF), Color(0xFFEA80FC)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+                    child: Text(
+                      title,
+                      style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -308,7 +351,7 @@ class DiscoverScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRoomCard(String title, String desc, String tag1, String tag2, int users, Color hostColor) {
+  Widget _buildRoomCard(BuildContext context, String title, String desc, String tag1, String tag2, int users, Color hostColor) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -378,7 +421,17 @@ class DiscoverScreen extends StatelessWidget {
                         _buildMiniAvatars(),
                         const Spacer(),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventRoomScreen(
+                                  eventTitle: title,
+                                  eventDescription: desc,
+                                ),
+                              ),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFFF1F2),
                             foregroundColor: const Color(0xFFFF4C71),

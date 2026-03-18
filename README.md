@@ -54,6 +54,8 @@ Mỗi game click → vào màn chơi full-screen (demo, không cần logic thắ
 - **Quay may mắn**: Vòng quay lớn (dùng flutter_fortune_wheel hoặc Custom), phần thưởng mock (điểm, quà, lượt chơi)
 - **Tặng quà**: Bottom sheet danh sách quà (hoa, xe, bao lì xì Tết) → animation bay tới avatar người nhận
 - **Discover**: Banner sự kiện Tết, list phòng chơi hot (card + số người + "Tham gia"), bạn bè gợi ý
+  - Mới: khi kích "Tham gia sự kiện" chuyển trang sang **Room mẫu**.
+  - Room mẫu gồm nền gradient tím/hồng pastel, hiệu ứng shimmer/lấp lánh cho tiêu đề, animation danh sách người chơi, nút xác nhận tham gia + quay lại.
 - **Profile (Me)**: Avatar to + level badge, điểm số, nút quay may mắn, túi quà, ngôn ngữ switcher, settings
 
 ### Gợi ý package Flutter (dễ implement)

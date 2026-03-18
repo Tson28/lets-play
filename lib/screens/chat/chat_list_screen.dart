@@ -2,8 +2,66 @@ import 'package:flutter/material.dart';
 import 'package:lets_play/screens/chat/chat_detail_screen.dart';
 import 'package:lets_play/screens/chat/widgets/chat_item.dart';
 
-class ChatListScreen extends StatelessWidget {
+class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
+
+  @override
+  State<ChatListScreen> createState() => _ChatListScreenState();
+}
+
+class _ChatListScreenState extends State<ChatListScreen> {
+  final List<Map<String, dynamic>> _chats = [
+    {
+      'name': 'Nguyễn Hằng',
+      'lastMessage': 'nhớ em không? 😘',
+      'time': '2m',
+      'unreadCount': 1,
+      'isOnline': true,
+      'color': Colors.green,
+      'messages': [
+        {'text': 'Hello!', 'isMe': false, 'time': '10:00 AM'},
+        {'text': 'Hi there!', 'isMe': true, 'time': '10:01 AM'},
+      ],
+    },
+    {
+      'name': 'Khánh Huyền',
+      'lastMessage': 'Em nhớ anh lắm luôn đó!  🥰',
+      'time': '1h',
+      'isOnline': true,
+      'color': Colors.pink,
+      'messages': [
+        {'text': 'Morning', 'isMe': false, 'time': '9:45 AM'},
+      ],
+    },
+    {
+      'name': 'Tet Party Squad 🧧',
+      'lastMessage': 'Minh: Who has the lucky money?',
+      'time': 'Yesterday',
+      'unreadCount': 3,
+      'isGroup': true,
+      'messages': [
+        {'text': 'Minh: Who has the lucky money?', 'isMe': false, 'time': 'Yesterday'},
+      ],
+    },
+    {
+      'name': 'David Tran',
+      'lastMessage': 'See you at the fireworks show!',
+      'time': 'Tue',
+      'color': Colors.purple,
+      'messages': [
+        {'text': 'See you at the fireworks show!', 'isMe': false, 'time': 'Tue'},
+      ],
+    },
+    {
+      'name': 'Thành Đạt',
+      'lastMessage': 'Tài xỉu không !',
+      'time': 'Tue',
+      'color': Colors.orange,
+      'messages': [
+        {'text': 'Tài xỉu không !', 'isMe': false, 'time': 'Tue'},
+      ],
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -78,81 +136,44 @@ class ChatListScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 20),
                           
-                          ChatItem(
-                            name: "Nguyễn Hằng",
-                            lastMessage: "nhớ em không? 😘",
-                            time: "2m",
-                            unreadCount: 1,
-                            isOnline: true,
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ChatDetailScreen(
-                                  name: "Nguyễn Hằng",
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ),
-                          ),
-                          ChatItem(
-                            name: "Khánh Huyền",
-                            lastMessage: "Em nhớ anh lắm luôn đó!  🥰",
-                            time: "1h",
-                            isOnline: true,
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ChatDetailScreen(
-                                  name: "Khánh Huyền",
-                                  color: Colors.pink,
-                                ),
-                              ),
-                            ),
-                          ),
-                          ChatItem(
-                            name: "Tet Party Squad 🧧",
-                            lastMessage: "Minh: Who has the lucky money?",
-                            time: "Yesterday",
-                            unreadCount: 3,
-                            isGroup: true,
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ChatDetailScreen(
-                                  name: "Tet Party Squad 🧧",
-                                ),
-                              ),
-                            ),
-                          ),
-                          ChatItem(
-                            name: "David Tran",
-                            lastMessage: "See you at the fireworks show!",
-                            time: "Tue",
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ChatDetailScreen(
-                                  name: "David Tran",
-                                  color: Colors.purple,
-                                ),
-                              ),
-                            ),
-                          ),
-                          ChatItem(
-                            name: "Thành Đạt",
-                            lastMessage: "Tài xỉu không !",
-                            time: "Tue",
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ChatDetailScreen(
-                                  name: "Thành Đạt",
-                                  color: Colors.orange,
-                                ),
-                              ),
-                            ),
-                          ),
-                          
+                          ..._chats.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final chat = entry.value;
+
+                            return ChatItem(
+                              name: chat['name'] as String,
+                              lastMessage: chat['lastMessage'] as String,
+                              time: chat['time'] as String,
+                              unreadCount: chat['unreadCount'] as int? ?? 0,
+                              isOnline: chat['isOnline'] as bool? ?? false,
+                              isGroup: chat['isGroup'] as bool? ?? false,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatDetailScreen(
+                                      name: chat['name'] as String,
+                                      color: chat['color'] as Color?,
+                                      initialMessages: List<Map<String, dynamic>>.from(chat['messages'] as List<dynamic>),
+                                      onNewMessage: (newMessage) {
+                                        setState(() {
+                                          _chats[index]['lastMessage'] = newMessage;
+                                          _chats[index]['time'] = 'Now';
+                                          _chats[index]['unreadCount'] = 0;
+                                          (_chats[index]['messages'] as List).add({
+                                            'text': newMessage,
+                                            'isMe': true,
+                                            'time': DateTime.now().toString().substring(11, 16),
+                                          });
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }).toList(),
+
                           const SizedBox(height: 100), // Bottom padding
                         ],
                       ),

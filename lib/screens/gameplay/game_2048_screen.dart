@@ -64,7 +64,6 @@ class _Game2048ScreenState extends State<Game2048Screen> {
         break;
     }
 
-    // Check if grid actually changed
     bool changed = false;
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 4; j++) {
@@ -76,12 +75,12 @@ class _Game2048ScreenState extends State<Game2048Screen> {
       if (changed) break;
     }
 
-    // Only add new tile and update if the grid changed
     if (changed) {
       _addNewTile();
-      _checkGameOver();
-      setState(() {});
     }
+
+    _checkGameOver();
+    setState(() {});
   }
 
   void _moveLeft() {
@@ -108,10 +107,9 @@ class _Game2048ScreenState extends State<Game2048Screen> {
       column = _compress(column);
       column = _merge(column);
       column = _compress(column);
-      _grid[0][j] = column[0];
-      _grid[1][j] = column[1];
-      _grid[2][j] = column[2];
-      _grid[3][j] = column[3];
+      for (int i = 0; i < 4; i++) {
+        _grid[i][j] = column[i];
+      }
     }
   }
 
@@ -123,10 +121,9 @@ class _Game2048ScreenState extends State<Game2048Screen> {
       column = _merge(column);
       column = _compress(column);
       column = column.reversed.toList();
-      _grid[0][j] = column[0];
-      _grid[1][j] = column[1];
-      _grid[2][j] = column[2];
-      _grid[3][j] = column[3];
+      for (int i = 0; i < 4; i++) {
+        _grid[i][j] = column[i];
+      }
     }
   }
 
@@ -149,37 +146,28 @@ class _Game2048ScreenState extends State<Game2048Screen> {
 
   void _checkGameOver() {
     bool hasEmpty = false;
-    bool canMoveHorizontal = false;
-    bool canMoveVertical = false;
+    bool canMove = false;
 
-    // Check for empty cells
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 4; j++) {
-        if (_grid[i][j] == 0) {
-          hasEmpty = true;
-          break;
+        if (_grid[i][j] == 0) hasEmpty = true;
+
+        if (j < 3 && _grid[i][j] == _grid[i][j + 1]) {
+          canMove = true;
         }
-        // Check horizontal merge
-        if (j < 3 && _grid[i][j] != 0 && _grid[i][j] == _grid[i][j + 1]) {
-          canMoveHorizontal = true;
-        }
-        // Check vertical merge
-        if (i < 3 && _grid[i][j] != 0 && _grid[i][j] == _grid[i + 1][j]) {
-          canMoveVertical = true;
+        if (i < 3 && _grid[i][j] == _grid[i + 1][j]) {
+          canMove = true;
         }
       }
-      if (hasEmpty) break;
     }
 
-    if (!hasEmpty && !canMoveHorizontal && !canMoveVertical) {
-      setState(() => _gameOver = true);
-    }
+    _gameOver = !(hasEmpty || canMove);
   }
 
   Color _getTileColor(int value) {
     switch (value) {
       case 0:
-        return Colors.grey[300]!;
+        return const Color(0xFFCDC1B4);
       case 2:
         return const Color(0xFFEEE4DA);
       case 4:
@@ -213,232 +201,145 @@ class _Game2048ScreenState extends State<Game2048Screen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context);
-        return false;
-      },
-      child: Scaffold(
-        backgroundColor: const Color(0xFF9F8F7F),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF776E5E),
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: const Text(
-            '2048',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
+    return Scaffold(
+      body: Stack(
+        children: [
+          // BACKGROUND
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('static_assets/images/back.jpg'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          actions: [
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.brown[300],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Score',
-                    style: TextStyle(color: Colors.white70, fontSize: 10),
+
+          // OVERLAY FIX SỌC
+          Container(
+            color: Colors.black.withOpacity(0.35),
+          ),
+
+          Column(
+            children: [
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const Text(
+                        '2048',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '$_score',
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 18),
+                      ),
+                    ],
                   ),
-                  Text(
-                    '$_score',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              Expanded(
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF8B5A2B), // màu đặc FIX SỌC
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: GridView.builder(
+                          itemCount: 16,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                          ),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            int row = index ~/ 4;
+                            int col = index % 4;
+                            int value = _grid[row][col];
+
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: _getTileColor(value),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                    color: Colors.black12, width: 1),
+                              ),
+                              child: Center(
+                                child: value != 0
+                                    ? Text(
+                                        '$value',
+                                        style: TextStyle(
+                                          color: _getTextColor(value),
+                                          fontSize:
+                                              value >= 1024 ? 18 : 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    : const SizedBox(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              Wrap(
+                spacing: 10,
+                children: [
+                  _btn('↑', () => _move('up')),
+                  _btn('↓', () => _move('down')),
+                  _btn('←', () => _move('left')),
+                  _btn('→', () => _move('right')),
                 ],
               ),
-            ),
-          ],
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                // Game Grid
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.brown[600],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: GridView.count(
-                    shrinkWrap: true,
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    childAspectRatio: 1.0,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: List.generate(16, (index) {
-                      final row = index ~/ 4;
-                      final col = index % 4;
-                      final value = _grid[row][col];
 
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: _getTileColor(value),
-                          borderRadius: BorderRadius.circular(4),
-                          boxShadow: [
-                            if (value != 0)
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 4,
-                              )
-                          ],
-                        ),
-                        child: Center(
-                          child: value != 0
-                              ? Text(
-                                  '$value',
-                                  style: TextStyle(
-                                    color: _getTextColor(value),
-                                    fontSize: value > 100 ? 20 : 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
+              const SizedBox(height: 10),
 
-                const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () => setState(_initializeGame),
+                child: const Text('New Game'),
+              ),
 
-                if (_gameOver)
-                  Container(
-                    padding:const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.red[400],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        const Text(
-                          'Game Over!',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Final Score: $_score',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                const Spacer(),
-
-                // Controls
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => _move('up'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.brown[400],
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(12),
-                          ),
-                          child: const Icon(Icons.arrow_upward, color: Colors.white, size: 24),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () => _move('left'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.brown[400],
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(12),
-                              ),
-                              child: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: () => _move('down'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.brown[400],
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(12),
-                              ),
-                              child: const Icon(Icons.arrow_downward, color: Colors.white, size: 24),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: () => _move('right'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.brown[400],
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(12),
-                              ),
-                              child: const Icon(Icons.arrow_forward, color: Colors.white, size: 24),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // New Game Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _initializeGame();
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFEDC22E),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    child: const Text(
-                      'New Game',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-              ],
-            ),
+              const SizedBox(height: 30),
+            ],
           ),
-        ),
+        ],
       ),
+    );
+  }
+
+  Widget _btn(String text, VoidCallback onTap) {
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.brown,
+        shape: const CircleBorder(),
+        padding: const EdgeInsets.all(16),
+      ),
+      child: Text(text,
+          style: const TextStyle(color: Colors.white, fontSize: 20)),
     );
   }
 }

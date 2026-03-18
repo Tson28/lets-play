@@ -92,6 +92,11 @@ class _QuickDrawScreenState extends State<QuickDrawScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF1E293B), size: 24),
+                      tooltip: 'Quay lại',
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
