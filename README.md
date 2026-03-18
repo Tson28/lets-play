@@ -24,7 +24,7 @@
 - **Tương tác xã hội**: Hệ thống Chat cá nhân/nhóm và danh sách người dùng trực tuyến.
 - **Vòng quay may mắn**: Nhận thưởng xu và phần quà hàng ngày với hiệu ứng sinh động.
 - **Hồ sơ cá nhân**: Quản lý thông tin, điểm số và đội ngũ phát triển.
-- **Đa ngôn ngữ**: Hỗ trợ Tiếng Việt, Tiếng Anh và Tiếng Trung.
+- **Đa ngôn ngữ**: Hỗ trợ Tiếng Việt, Tiếng Anh.
 
 ---
 
