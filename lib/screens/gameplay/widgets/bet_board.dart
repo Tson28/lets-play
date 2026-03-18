@@ -79,7 +79,7 @@ class BetBoard extends StatelessWidget {
               crossAxisCount: 3,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 1.1,
+              childAspectRatio: 0.95,
             ),
             itemCount: options.length,
             itemBuilder: (context, index) {
@@ -165,16 +165,23 @@ class _BetCell extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    option.icon,
-                    size: 32,
-                    color: hasBet ? option.color : Colors.white.withOpacity(0.6),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: hasBet ? option.color.withOpacity(0.25) : Colors.white.withOpacity(0.08),
+                    ),
+                    child: Icon(
+                      option.icon,
+                      size: 22,
+                      color: hasBet ? option.color : Colors.white.withOpacity(0.7),
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     option.label,
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: hasBet ? Colors.white : Colors.white.withOpacity(0.7),
                     ),

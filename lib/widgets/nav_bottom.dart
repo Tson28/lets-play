@@ -4,6 +4,7 @@ import 'package:lets_play/screens/discover/discover_screen.dart';
 import 'package:lets_play/screens/gameplay/gameplay_screen.dart';
 import 'package:lets_play/screens/chat/chat_screen.dart';
 import 'package:lets_play/screens/profile/profile_screen.dart';
+import 'package:lets_play/screens/main/post_creation_screen.dart';
 
 class NavBottom extends StatefulWidget {
   const NavBottom({super.key});
@@ -58,9 +59,10 @@ class _NavBottomState extends State<NavBottom> {
         ),
         child: FloatingActionButton(
           onPressed: () {
-            setState(() {
-              _currentIndex = 2; // Gameplay center
-            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PostCreationScreen()),
+            );
           },
           elevation: 0,
           highlightElevation: 0,

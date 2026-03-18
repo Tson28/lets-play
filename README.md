@@ -1,9 +1,17 @@
 # Let's Play – Mini Clone UI của WePlay (Flutter Project)
 
-**Tên dự án gợi ý**: Let's Play  
 **Môn học**: Lập trình cho thiết bị di động  
-**Công nghệ**: Flutter + Dart (chỉ tập trung **UI/UX**, không cần backend thật)  
+**Giảng viên hướng dẫn**: ThS. Nguyễn Xuân Quế  
+
+### Nhóm thực hiện
+| STT | Họ và tên | Mã sinh viên | Vai trò |
+|---|---|---|---|
+| 1 | **Nguyễn Thái Sơn** | 23010196 | Lên ý tưởng, Thiết kế UI|
+| 2 | **Lê Phạm Thành Đạt** | 23010541 | Hiện thực hóa ý tưởng, Code Flutter |
+
+**Công nghệ**: Flutter + Dart (Tập trung **UI/UX**)  
 **Mục tiêu**: Xây dựng giao diện người dùng giống phong cách WePlay (app party game + voice chat + minigame phổ biến ở Việt Nam), nhấn mạnh **minigame Tết** và hệ thống vui nhộn (quay may mắn, tặng quà, chat).
+
 
 ### Mô tả tổng quan
 App là một **social party game** vui nhộn, lấy cảm hứng từ WePlay: giao diện màu sắc rực rỡ, cartoon, gradient tím-hồng-vàng, chủ đề Tết Việt Nam (đỏ-vàng, bao lì xì, pháo hoa).  
@@ -54,6 +62,8 @@ Mỗi game click → vào màn chơi full-screen (demo, không cần logic thắ
 - **Quay may mắn**: Vòng quay lớn (dùng flutter_fortune_wheel hoặc Custom), phần thưởng mock (điểm, quà, lượt chơi)
 - **Tặng quà**: Bottom sheet danh sách quà (hoa, xe, bao lì xì Tết) → animation bay tới avatar người nhận
 - **Discover**: Banner sự kiện Tết, list phòng chơi hot (card + số người + "Tham gia"), bạn bè gợi ý
+  - Mới: khi kích "Tham gia sự kiện" chuyển trang sang **Room mẫu**.
+  - Room mẫu gồm nền gradient tím/hồng pastel, hiệu ứng shimmer/lấp lánh cho tiêu đề, animation danh sách người chơi, nút xác nhận tham gia + quay lại.
 - **Profile (Me)**: Avatar to + level badge, điểm số, nút quay may mắn, túi quà, ngôn ngữ switcher, settings
 
 ### Gợi ý package Flutter (dễ implement)
